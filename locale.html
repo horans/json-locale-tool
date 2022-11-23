@@ -1,0 +1,440 @@
+<!doctype html>
+<html lang="en" style="overflow-y:scroll">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Locale Tool</title>
+    <link rel="shortcut icon" href="https://horans.github.io/asset/favicon.ico">
+    <link href="https://cdn.staticfile.org/bootstrap/5.2.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/font-awesome/6.2.1/css/fontawesome.min.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/font-awesome/6.2.1/css/solid.min.css" rel="stylesheet">
+    <style>
+      article:not(.active) { opacity: 0.5; }
+      header:not(.ready), article:not(.ready) { opacity: 0; pointer-events: none; }
+      dl, dt, dd { margin-bottom: 0; font-weight: 400; }
+      [lang="en"] [data-locale="zh"], [lang="zh"] [data-locale="en"] { display: none; }
+      .form-check { margin-bottom: 0; min-height: auto; }
+    </style>
+  </head>
+  <body class="d-flex flex-column vh-100">
+    <!--
+    /*****************************************************
+    *  project: locale tool for json                     *
+    *  description: main page                            *
+    *  author: horans@gmail.com                          *
+    *  url: github.com/horans/json-locale-tool           *
+    *  update: 221123                                    *
+    *****************************************************/
+     -->
+    <main id="app" class="container flex-grow-1 d-flex flex-column">
+      <header class="position-sticky top-0 pt-4 bg-white" :class="{ ready }" style="z-index:10">
+        <h1 class="h2 mb-3 text-center">
+          <i class="fa fa-fw fa-language"></i> <span data-locale="en">Locale Tool for JSON</span><span data-locale="zh">JSON 多语言工具</span>
+        </h1>
+        <div class="d-flex justify-content-center align-items-center gap-4">
+          <section class="d-flex gap-2 align-items-center">
+            <i class="fa fa-fw fa-file-import"></i>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-primary" @click="pick('previous')"
+                title="Import an old JSON locale file as base"
+              >
+                <i class="fa fa-fw fa-backward-step"></i> <span data-locale="en">Import Previous</span><span data-locale="zh">导入旧版</span>
+              </button>
+              <button type="button" class="btn btn-danger" @click="pick('current')"
+                title="Import a new JSON locale file to compare"
+              >
+                <i class="fa fa-fw fa-forward-step"></i> <span data-locale="en">Import Current</span><span data-locale="zh">导入新版</span>
+              </button>
+            </div>
+          </section>
+          <section class="d-flex gap-2 align-items-center">
+            <i class="fa fa-fw fa-file-export"></i>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-outline-secondary" :disabled="!hasImported" @click="save('differ')"
+                title="Export added/updated terms from current file as JSON for translator"
+              >
+                <i class="fa fa-fw fa-code-compare"></i> <span data-locale="en">Export Different</span><span data-locale="zh">导出不同</span>
+              </button>
+              <button type="button" class="btn btn-outline-success" :disabled="!hasImported" @click="save('merge')"
+                title="Merge added/updated terms into previous file and export as JSON for developer"
+              >
+                <i class="fa fa-fw fa-code-merge"></i> <span data-locale="en">Export Merged</span><span data-locale="zh">导出合并</span>
+              </button>
+              <button type="button" class="btn btn-outline-info" :disabled="!hasImported" @click="save('clean')"
+                title="Delete removed terms from previous file and export as JSON for developer"
+              >
+                <i class="fa fa-fw fa-hand-sparkles"></i> <span data-locale="en">Export Cleaned</span><span data-locale="zh">导出清理</span>
+              </button>
+            </div>
+          </section>
+          <section>
+            <button type="button" class="btn btn-outline-warning" @click="reset()"><i class="fa fa-fw fa-clock-rotate-left"></i> <span data-locale="en">Reset</span><span data-locale="zh">重置</span></button>
+            <input ref="file" hidden type="file" accept="application/json" @change="load($event)">
+            <a ref="download" class="d-none" href="#" download="exported.json"></a>
+          </section>
+        </div>
+        <hr>
+      </header>
+
+      <article class="flex-grow-1 d-flex flex-column gap-2" :class="{ ready, active }">
+        <section class="row text-center">
+          <h5 class="col-6"><i class="fa fa-fw fa-gear"></i> <span data-locale="en">Settings</span><span data-locale="zh">设置</span></h5>
+          <h5 class="col-6"><i class="fa fa-fw fa-tag"></i> <span data-locale="en">Terms</span><span data-locale="zh">名词</span></h5>
+        </section>
+
+        <section class="row">
+          <ul class="list-group list-group-flush col-6">
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-4">
+                  <label><i class="fa fa-fw fa-eye"></i> <span data-locale="en">Display</span><span data-locale="zh">显示</span>:</label>
+                </div>
+                <div class="col-8 d-flex gap-4">
+                  <label class="form-check">
+                    <input v-model="config.intl" class="form-check-input" type="checkbox">
+                    <dt class="form-check-label"><i class="fa fa-fw fa-globe"></i> <span data-locale="en">English UI</span><span data-locale="zh">英语界面</span></dt>
+                  </label>
+                  <label class="form-check">
+                    <input v-model="config.file" class="form-check-input" type="checkbox">
+                    <dt class="form-check-label"><i class="fa fa-fw fa-circle-info"></i> <span data-locale="en">File Info</span><span data-locale="zh">文件信息</span></dt>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="row">
+                <div class="col-4">
+                  <label><i class="fa fa-fw fa-file-export"></i> <span data-locale="en">Export</span><span data-locale="zh">导出</span>:</label>
+                </div>
+                <div class="col-8 d-flex gap-4">
+                  <label class="form-check" title="Treat .json key as flatten string">
+                    <input v-model="config.flat" class="form-check-input" type="checkbox" :disabled="!hasImported">
+                    <dt class="form-check-label"><i class="fa fa-fw fa-rectangle-list"></i> <span data-locale="en">Flat Keys</span><span data-locale="zh">平铺标识</span></dt>
+                  </label>
+                  <label class="form-check" title="Only process added terms for different/merged">
+                    <input v-model="config.skip" class="form-check-input" type="checkbox" :disabled="!hasImported">
+                    <dt class="form-check-label"><i class="fa fa-fw fa-forward"></i> <span data-locale="en">Skip Updated</span><span data-locale="zh">忽略变更</span></dt>
+                  </label>
+                </div>
+              </div>
+            </li>
+          </ul>
+          <ul class="list-group list-group-flush col-6">
+            <li class="list-group-item">
+              <div class="row">
+                <label class="form-check col-4">
+                  <dl class="form-check-label d-flex gap-2">
+                    <dt><i class="fa fa-fw fa-circle-up"></i> <span data-locale="en">Total</span><span data-locale="zh">总计</span>:</dt>
+                    <dd>{{ listTotal.length }}</dd>
+                  </dl>
+                </label>
+                <label class="form-check col-4">
+                  <dl class="form-check-label d-flex gap-2">
+                    <dt><i class="fa fa-fw fa-circle-exclamation"></i> <span data-locale="en">Changed</span><span data-locale="zh">差异</span>:</dt>
+                    <dd v-if="hasImported">{{ listChanged.length }}</dd>
+                  </dl>
+                </label>
+                <label class="form-check col-4">
+                  <input v-model="config.same" class="form-check-input" type="checkbox" role="switch" :disabled="!hasImported">
+                  <dl class="d-flex gap-2">
+                    <dt><i class="fa fa-fw fa-circle-check"></i> <span data-locale="en">Same</span><span data-locale="zh">相同</span>:</dt>
+                    <dd v-if="hasImported">{{ listSame.length }}</dd>
+                  </dl>
+                </label>
+              </div>
+            </li>
+            <li class="list-group-item">
+              <div class="row">
+                <label class="form-check col-4">
+                  <input v-model="config.added" class="form-check-input" type="checkbox" role="switch" :disabled="!hasImported">
+                  <dl class="form-check-label d-flex gap-2 text-warning">
+                    <dt><i class="fa fa-fw fa-circle-plus"></i> <span data-locale="en">Added</span><span data-locale="zh">新增</span>:</dt>
+                    <dd v-if="hasImported">{{ listAdded.length }}</dd>
+                  </dl>
+                </label>
+                <label class="form-check col-4">
+                  <input v-model="config.removed" class="form-check-input" type="checkbox" role="switch" :disabled="!hasImported">
+                  <dl class="form-check-label d-flex gap-2 text-danger">
+                    <dt><i class="fa fa-fw fa-circle-minus"></i> <span data-locale="en">Removed</span><span data-locale="zh">移除</span>:</dt>
+                    <dd v-if="hasImported">{{ listRemoved.length }}</dd>
+                  </dl>
+                </label>
+                <label class="form-check col-4">
+                  <input v-model="config.updated" class="form-check-input" type="checkbox" role="switch" :disabled="!hasImported">
+                  <dl class="form-check-label d-flex gap-2 text-info">
+                    <dt><i class="fa fa-fw fa-circle-question"></i> <span data-locale="en">Updated</span><span data-locale="zh">变更</span>:</dt>
+                    <dd v-if="hasImported">{{ listUpdated.length }}</dd>
+                  </dl>
+                </label>
+              </div>
+            </li>
+          </ul>
+          <hr>
+        </section>
+
+        <section class="row text-center">
+          <h5 class="col-6"><i class="fa fa-fw fa-backward-step"></i> <span data-locale="en">Previous</span><span data-locale="zh">旧版</span></h5>
+          <h5 class="col-6"><i class="fa fa-fw fa-forward-step"></i> <span data-locale="en">Current</span><span data-locale="zh">新版</span></h5>
+        </section>
+
+        <section v-if="config.file" class="row">
+          <ul class="list-group list-group-flush col-6" v-for="(item, name) in file">
+            <li class="list-group-item d-flex justify-content-between">
+              <dt><i class="fa fa-fw fa-file"></i> <span data-locale="en">File Name</span><span data-locale="zh">文件名称</span>:</dt>
+              <dd v-if="name === 'previous' ? hasPrevious : hasCurrent">{{ item.name }}</dd>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <dt><i class="fa fa-fw fa-weight-scale"></i> <span data-locale="en">File Size</span><span data-locale="zh">文件大小</span>:</dt>
+              <dd v-if="name === 'previous' ? hasPrevious : hasCurrent">{{ showFileSize(item.size) }}</dd>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <dt><i class="fa fa-fw fa-clock"></i> <span data-locale="en">Last Modified</span><span data-locale="zh">修改时间</span>:</dt>
+              <dd v-if="name === 'previous' ? hasPrevious : hasCurrent">{{ showDateTime(item.lastModified) }}</dd>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+              <dt><i class="fa fa-fw fa-tags"></i> <span data-locale="en">Term Count</span><span data-locale="zh">名词数量</span>:</dt>
+              <dd v-if="name === 'previous' ? hasPrevious : hasCurrent">{{ Object.keys(name === 'previous' ? listPrevious : listCurrent).length }}</dd>
+            </li>
+          </ul>
+          <hr>
+        </section>
+
+        <table class="table table-hover" style="font-size:12px">
+          <thead>
+            <tr>
+              <th width="20%">
+                <label class="form-check">
+                  <input v-model="config.kp" class="form-check-input" type="checkbox">
+                  <span class="form-check-label"
+                    title="Key of previous/old/based locale file"
+                  >
+                    <i class="fa fa-fw fa-key"></i> <span data-locale="en">Key of Previous</span><span data-locale="zh">旧版标识</span>
+                  </span>
+                </label>                
+              </th>
+              <th width="30%">
+                <label class="form-check">
+                  <input v-model="config.vp" class="form-check-input" type="checkbox">
+                  <span class="form-check-label"
+                    title="Value of previous/old/based locale file"
+                  >
+                    <i class="fa fa-fw fa-comment"></i> <span data-locale="en">Value of Previous</span><span data-locale="zh">旧版文案</span>
+                  </span>
+                </label>                
+              </th>
+              <th width="20%">
+                <label class="form-check">
+                  <input v-model="config.kc" class="form-check-input" type="checkbox">
+                  <span class="form-check-label"
+                    title="Key of current/new/compared locale file"
+                  >
+                    <i class="fa fa-fw fa-key"></i> <span data-locale="en">Key of Current</span><span data-locale="zh">新版标识</span>
+                  </span>
+                </label>                
+              </th>
+              <th width="30%">
+                <label class="form-check">
+                  <input v-model="config.vc" class="form-check-input" type="checkbox">
+                  <span class="form-check-label"
+                    title="Value of current/new/compared locale file"
+                  >
+                    <i class="fa fa-fw fa-comment"></i> <span data-locale="en">Value of Current</span><span data-locale="zh">新版文案</span>
+                  </span>
+                </label>                
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="item in listTotal"
+              :class="[
+                item.st === 'added' ? 'table-warning' : '',
+                item.st === 'added' && !config.added ? 'd-none' : '',
+                item.st === 'removed' ? 'table-danger' : '',
+                item.st === 'removed' && !config.removed ? 'd-none' : '',
+                item.st === 'updated' ? 'table-info' : '',
+                item.st === 'updated' && !config.updated ? 'd-none' : '',
+                item.st === 'same' && !config.same ? 'd-none' : ''
+              ]"
+            >
+              <td class="font-monospace text-muted fw-light">{{ config.kp ? item.kp : '' }}</td>
+              <td class="text-wrap">{{ config.vp ? item.vp : '' }}</td>
+              <td class="font-monospace text-muted fw-light">{{ config.kc ? item.kc : '' }}</td>
+              <td class="text-wrap">{{ config.vc ? item.vc : '' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </article>
+    </main>
+
+    <footer class="container">
+      <hr>
+      <div class="text-center pb-3">
+        <span class="small text-muted">powered by <a href="https://github.com/horans/json-locale-tool" target="_blank">horan</a></span>
+      </div>
+    </footer>
+
+    <script src="https://cdn.staticfile.org/lodash.js/4.17.21/lodash.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue/3.2.45/vue.global.min.js"></script>
+    <!-- <script src="https://cdn.staticfile.org/twitter-bootstrap/5.2.2/js/bootstrap.bundle.min.js"></script> -->
+    <script>
+      // https://github.com/lodash/lodash/issues/2240
+      const flattenKeys = (obj, path = []) =>
+          !_.isObject(obj)
+              ? { [path.join('.')]: obj }
+              : _.reduce(obj, (cum, next, key) => _.merge(cum, flattenKeys(next, [...path, key])), {})
+
+      const defaultFile = { name: '', size: null, lastModified: null,  }
+
+      const { createApp } = Vue
+      createApp({
+        data() {
+          return {
+            ready: false,
+            active: false,
+            input: 'pending',
+            message: {
+              previous: null,
+              current: null
+            },
+            file: {
+              previous: _.clone(defaultFile),
+              current: _.clone(defaultFile)
+            },
+            config: {
+              intl: true,
+              file: false,
+              flat: true,
+              skip: true,
+              same: false,
+              added: true,
+              removed: true,
+              updated: false,
+              kp: true,
+              kc: true,
+              vp: true,
+              vc: true
+            }
+          }
+        },
+        computed: {
+          listPrevious () { return _.isEmpty(this.message.previous) ? [] : flattenKeys(this.message.previous) },
+          listCurrent () { return _.isEmpty(this.message.current) ? [] : flattenKeys(this.message.current) },
+          listTotal () {
+            const total = []
+            _.each(this.listPrevious, (value, key) => {
+              total.push({ kp: key, vp: value })
+            })
+            _.each(this.listCurrent, (value, key) => {
+              const index = _.findIndex(total, item => item.kp === key)
+              if (index > -1) {
+                total[index].kc = key
+                total[index].vc = value
+              } else total.push({ kc: key, vc: value })
+            })
+            _.each(total, item => {
+              item.st = this.showItemState(item)
+            })
+            return total
+          },
+          listSame () { return this.listTotal.filter(item => item.st === 'same') },
+          listChanged () { return this.listTotal.filter(item => item.st !== 'pending' && item.st !== 'same') },
+          listAdded () { return this.listChanged.filter(item => item.st === 'added') },
+          listRemoved () { return this.listChanged.filter(item => item.st === 'removed') },
+          listUpdated () { return this.listChanged.filter(item => item.st === 'updated') },
+          hasPrevious () { return _.keys(this.listPrevious).length > 0 },
+          hasCurrent () { return _.keys(this.listCurrent).length > 0 },
+          hasTotal () { return this.listTotal.length > 0 },
+          hasChanged () { return this.listChanged.length > 0 },
+          hasImported () { return this.hasPrevious && this.hasCurrent }
+        },
+        methods: {
+          reset () {
+            this.active = false
+            this.mode = 'pending'
+            this.input = 'pending'
+            this.message.previous = null
+            this.message.current = null
+            this.file.previous = _.clone(defaultFile)
+            this.file.current = _.clone(defaultFile)
+          },
+          pick (input) {
+            this.input = input
+            this.$refs.file.click()
+          },
+          load (event) {
+            const file = event.target.files[0]
+            const reader = new FileReader()
+            reader.addEventListener('load', e => {
+              try {
+                if (this.input !== 'pending') {
+                  this.message[this.input] = JSON.parse(e.target.result)
+                  this.file[this.input].name = file.name
+                  this.file[this.input].lastModified = file.lastModified
+                  this.file[this.input].size = file.size
+                  this.input = 'pending'
+                  this.active = true
+                  this.$refs.file.value = null
+                }
+              } catch {}
+            })
+            reader.readAsText(file)
+          },
+          save (output) {
+            // try {
+              // https://stackoverflow.com/questions/24515894/
+              const str = JSON.stringify(this.getExportedMessage(output), null, 2)
+              // https://stackoverflow.com/questions/33780271/
+              this.$refs.download.href = 'data:application/json;charset=utf-8,'+ encodeURIComponent(str)
+              this.$refs.download.click()
+              setTimeout(() => { this.$refs.download.href = '#' })
+            // } catch {}
+          },
+          getExportedMessage (output) {
+            let obj = {}
+            switch(output) {
+              case 'clean':
+                obj =_.omit(this.message.previous, this.listRemoved.map(item => item.kp))
+                break
+              case 'merge':
+                obj = _.cloneDeep(this.message.previous)
+              case 'differ':
+              default:
+                _.each(this.config.skip ? this.listAdded : _.clone(this.listAdded).concat(this.listUpdated), item => {
+                  _.set(obj, item.kc, item.vc)
+                })
+                break
+            }
+            return this.config.flat ? flattenKeys(obj) : obj
+          },
+          showItemState (item) {
+            if (!this.hasImported) return 'pending'
+            else if ((!_.has(item, 'kp') && _.has(item, 'kc'))) return 'added'
+            else if ((_.has(item, 'kp') && !_.has(item, 'kc'))) return 'removed'
+            else if (item.vp == null && item.vc != null) return 'added'
+            else if (item.vp != null && item.vc == null) return 'removed'
+            else if (item.vp !== item.vc) return 'updated'
+            else return 'same'
+          },
+          showFileSize (size) {
+            return ((_.isNumber(size) ? size : 0) / 1024).toFixed(2).toString() + ' KB'
+          },
+          showDateTime (time) {
+            return new Date(time).toLocaleDateString(undefined, {
+              year: 'numeric', month: 'numeric', day: 'numeric',
+              hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false
+            })
+          }
+        },
+        created() {
+          this.ready = true
+        },
+        watch: {
+          'config.intl': function (nv) {
+            document.querySelector('html')?.setAttribute('lang', nv ? 'en' : 'zh')
+          }
+        }
+      }).mount('#app')
+    </script>
+  </body>
+</html>
