@@ -9,7 +9,7 @@
     <link href="https://cdn.staticfile.org/font-awesome/6.2.1/css/fontawesome.min.css" rel="stylesheet">
     <link href="https://cdn.staticfile.org/font-awesome/6.2.1/css/solid.min.css" rel="stylesheet">
     <style>
-      article:not(.active) { opacity: 0.5; }
+      article:not(.active) { opacity: 0.4; }
       header:not(.ready), article:not(.ready) { opacity: 0; pointer-events: none; }
       dl, dt, dd { margin-bottom: 0; font-weight: 400; }
       [lang="en"] [data-locale="zh"], [lang="zh"] [data-locale="en"] { display: none; }
@@ -23,7 +23,7 @@
     *  description: main page                            *
     *  author: horans@gmail.com                          *
     *  url: github.com/horans/json-locale-tool           *
-    *  update: 221123                                    *
+    *  update: 221124                                    *
     *****************************************************/
      -->
     <main id="app" class="container flex-grow-1 d-flex flex-column">
@@ -86,27 +86,31 @@
           <ul class="list-group list-group-flush col-6">
             <li class="list-group-item">
               <div class="row">
-                <div class="col-4">
+                <div class="col-3">
                   <label><i class="fa fa-fw fa-eye"></i> <span data-locale="en">Display</span><span data-locale="zh">显示</span>:</label>
                 </div>
-                <div class="col-8 d-flex gap-4">
-                  <label class="form-check">
+                <div class="col-9 d-flex gap-4">
+                  <label class="form-check" title="Show page in English or Chinese">
                     <input v-model="config.intl" class="form-check-input" type="checkbox">
                     <dt class="form-check-label"><i class="fa fa-fw fa-globe"></i> <span data-locale="en">English UI</span><span data-locale="zh">英语界面</span></dt>
                   </label>
-                  <label class="form-check">
+                  <label class="form-check" title="Show extra info from locale files">
                     <input v-model="config.file" class="form-check-input" type="checkbox">
                     <dt class="form-check-label"><i class="fa fa-fw fa-circle-info"></i> <span data-locale="en">File Info</span><span data-locale="zh">文件信息</span></dt>
+                  </label>
+                  <label class="form-check" title="Highlight value with plurals/variables">
+                    <input v-model="config.special" class="form-check-input" type="checkbox">
+                    <dt class="form-check-label"><i class="fa fa-fw fa-highlighter"></i> <span data-locale="en">Label Special</span><span data-locale="zh">标记特殊</span></dt>
                   </label>
                 </div>
               </div>
             </li>
             <li class="list-group-item">
               <div class="row">
-                <div class="col-4">
+                <div class="col-3">
                   <label><i class="fa fa-fw fa-file-export"></i> <span data-locale="en">Export</span><span data-locale="zh">导出</span>:</label>
                 </div>
-                <div class="col-8 d-flex gap-4">
+                <div class="col-9 d-flex gap-4">
                   <label class="form-check" title="Treat .json key as flatten string">
                     <input v-model="config.flat" class="form-check-input" type="checkbox" :disabled="!hasImported">
                     <dt class="form-check-label"><i class="fa fa-fw fa-rectangle-list"></i> <span data-locale="en">Flat Keys</span><span data-locale="zh">平铺标识</span></dt>
@@ -169,7 +173,7 @@
               </div>
             </li>
           </ul>
-          <hr>
+          <hr style="width:calc(100% - 0.75rem)">
         </section>
 
         <section class="row text-center">
@@ -196,7 +200,7 @@
               <dd v-if="name === 'previous' ? hasPrevious : hasCurrent">{{ Object.keys(name === 'previous' ? listPrevious : listCurrent).length }}</dd>
             </li>
           </ul>
-          <hr>
+          <hr style="width:calc(100% - 0.75rem)">
         </section>
 
         <table class="table table-hover" style="font-size:12px">
@@ -218,7 +222,7 @@
                   <span class="form-check-label"
                     title="Value of previous/old/based locale file"
                   >
-                    <i class="fa fa-fw fa-comment"></i> <span data-locale="en">Value of Previous</span><span data-locale="zh">旧版文案</span>
+                    <i class="fa fa-fw fa-message"></i> <span data-locale="en">Value of Previous</span><span data-locale="zh">旧版文案</span>
                   </span>
                 </label>                
               </th>
@@ -238,7 +242,7 @@
                   <span class="form-check-label"
                     title="Value of current/new/compared locale file"
                   >
-                    <i class="fa fa-fw fa-comment"></i> <span data-locale="en">Value of Current</span><span data-locale="zh">新版文案</span>
+                    <i class="fa fa-fw fa-message"></i> <span data-locale="en">Value of Current</span><span data-locale="zh">新版文案</span>
                   </span>
                 </label>                
               </th>
@@ -260,7 +264,17 @@
               <td class="font-monospace text-muted fw-light">{{ config.kp ? item.kp : '' }}</td>
               <td class="text-wrap">{{ config.vp ? item.vp : '' }}</td>
               <td class="font-monospace text-muted fw-light">{{ config.kc ? item.kc : '' }}</td>
-              <td class="text-wrap">{{ config.vc ? item.vc : '' }}</td>
+              <td class="text-wrap position-relative">
+                <template v-if="config.vc">
+                  <div class="position-absolute top-0 start-0 w-100 h-100 bg-info opacity-25" v-if="config.special && (item.sp || item.sv)"></div>
+                  <label class="position-absolute top-50 end-0 translate-middle-y pe-1 d-flex flex-column gap-1" v-if="config.special && (item.sp || item.sv)">
+                    <i class="fa fa-fw fa-tags" v-if="item.sp"></i>
+                    <i class="fa fa-fw fa-code" v-if="item.sv"></i>
+                  </label>
+                  <span class="position-relative vertical-bottom" v-if="config.special && (item.sp || item.sv)" v-html="showFormattedText(item.vc)"></span>
+                  <template v-else>{{ item.vc }}</template>
+                </template>
+              </td>
             </tr>
           </tbody>
         </table>
@@ -275,8 +289,7 @@
     </footer>
 
     <script src="https://cdn.staticfile.org/lodash.js/4.17.21/lodash.min.js"></script>
-    <script src="https://cdn.staticfile.org/vue/3.2.45/vue.global.min.js"></script>
-    <!-- <script src="https://cdn.staticfile.org/twitter-bootstrap/5.2.2/js/bootstrap.bundle.min.js"></script> -->
+    <script src="https://cdn.staticfile.org/vue/3.2.45/vue.global.prod.min.js"></script>
     <script>
       // https://github.com/lodash/lodash/issues/2240
       const flattenKeys = (obj, path = []) =>
@@ -285,6 +298,8 @@
               : _.reduce(obj, (cum, next, key) => _.merge(cum, flattenKeys(next, [...path, key])), {})
 
       const defaultFile = { name: '', size: null, lastModified: null,  }
+      const patternPl = /\|/g
+      const patternVar = /{\S+}/g
 
       const { createApp } = Vue
       createApp({
@@ -305,6 +320,7 @@
               intl: true,
               file: false,
               flat: true,
+              special: true,
               skip: true,
               same: false,
               added: true,
@@ -334,6 +350,8 @@
             })
             _.each(total, item => {
               item.st = this.showItemState(item)
+              item.sp = this.showItemSpecial(item.vc, 'pl')
+              item.sv = this.showItemSpecial(item.vc, 'var')
             })
             return total
           },
@@ -381,14 +399,14 @@
             reader.readAsText(file)
           },
           save (output) {
-            // try {
+            try {
               // https://stackoverflow.com/questions/24515894/
               const str = JSON.stringify(this.getExportedMessage(output), null, 2)
               // https://stackoverflow.com/questions/33780271/
               this.$refs.download.href = 'data:application/json;charset=utf-8,'+ encodeURIComponent(str)
               this.$refs.download.click()
               setTimeout(() => { this.$refs.download.href = '#' })
-            // } catch {}
+            } catch {}
           },
           getExportedMessage (output) {
             let obj = {}
@@ -399,11 +417,11 @@
               case 'merge':
                 obj = _.cloneDeep(this.message.previous)
               case 'differ':
-              default:
                 _.each(this.config.skip ? this.listAdded : _.clone(this.listAdded).concat(this.listUpdated), item => {
                   _.set(obj, item.kc, item.vc)
                 })
                 break
+              default: break
             }
             return this.config.flat ? flattenKeys(obj) : obj
           },
@@ -416,6 +434,19 @@
             else if (item.vp !== item.vc) return 'updated'
             else return 'same'
           },
+          showItemSpecial (value, type) {
+            let regex
+            switch(type) {
+              case 'pl':
+                regex = patternPl
+                break
+              case 'var':
+                regex = patternVar
+                break
+              default: return false
+            }
+            return regex.test(value)
+          },
           showFileSize (size) {
             return ((_.isNumber(size) ? size : 0) / 1024).toFixed(2).toString() + ' KB'
           },
@@ -424,9 +455,38 @@
               year: 'numeric', month: 'numeric', day: 'numeric',
               hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false
             })
+          },
+          showFormattedText (text) {
+            function execPattern (str, pattern) {
+              let match = []
+              let group = []
+              let output = ''
+              let result
+              // https://stackoverflow.com/questions/11270302/
+              while (null != (result = pattern.exec(str))) {
+                match.push(result[0])
+              }
+              if (match.length > 0) {
+                group = str.split(pattern)
+                _.each(match, (item, index) => {
+                  output += group[index] + '<span class="fw-bold">' + item + '</span>'
+                })
+                output += group[group.length - 1]
+                return output
+              } else return str
+            }
+            text = execPattern(text, patternPl)
+            text = execPattern(text, patternVar)
+            return text
+          },
+          checkBrowserLanguage () {
+            let isZh = false
+            _.each(navigator.languages, item => { if (item.indexOf('zh') > -1) isZh = true })
+            if (isZh) this.config.intl = false
           }
         },
         created() {
+          this.checkBrowserLanguage()
           this.ready = true
         },
         watch: {
