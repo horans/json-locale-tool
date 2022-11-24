@@ -1,4 +1,4 @@
-# JSON Locale Tool
+# Locale Tool for JSON
 
 An online inspect/export tool for Vue i18n JSON locale files.
 
