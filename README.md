@@ -7,11 +7,12 @@ An online inspect/export tool for Vue i18n JSON locale files.
 ### 2011-11-25
 
 - +delete null keys
+- +highlight null values
 
 ### 2022-11-24
 
 - +auto show zh ui
-- +highlight plurals/variables
+- +highlight plurals/variables values
 - #rename page
 - #minor tweaks
 

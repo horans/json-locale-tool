@@ -98,7 +98,7 @@
                     <input v-model="config.file" class="form-check-input" type="checkbox">
                     <dt class="form-check-label"><i class="fa fa-fw fa-circle-info"></i> <span data-locale="en">File Info</span><span data-locale="zh">文件信息</span></dt>
                   </label>
-                  <label class="form-check" title="Highlight value with plurals/variables">
+                  <label class="form-check" title="Highlight null value for previous, and plurals/variables for current">
                     <input v-model="config.special" class="form-check-input" type="checkbox">
                     <dt class="form-check-label"><i class="fa fa-fw fa-highlighter"></i> <span data-locale="en">Label Special</span><span data-locale="zh">标记特殊</span></dt>
                   </label>
@@ -265,9 +265,17 @@
                 item.st === 'same' && !config.same ? 'd-none' : ''
               ]"
             >
-              <td class="font-monospace text-muted fw-light">{{ config.kp ? item.kp : '' }}</td>
-              <td class="text-wrap">{{ config.vp ? item.vp : '' }}</td>
-              <td class="font-monospace text-muted fw-light">{{ config.kc ? item.kc : '' }}</td>
+              <td class="font-monospace text-wrap text-muted fw-light">{{ config.kp ? item.kp : '' }}</td>
+              <td class="text-wrap position-relative">
+                <template v-if="config.vp">
+                  <div class="position-absolute top-0 start-0 w-100 h-100 bg-info opacity-25" v-if="config.special && item.sn"></div>
+                  <label class="position-absolute top-50 end-0 translate-middle-y pe-1" v-if="config.special && item.sn">
+                    <i class="fa fa-fw fa-eraser" v-if="item.sn"></i>
+                  </label>
+                  {{ item.vp }}
+                </template>
+              </td>
+              <td class="font-monospace text-wrap text-muted fw-light">{{ config.kc ? item.kc : '' }}</td>
               <td class="text-wrap position-relative">
                 <template v-if="config.vc">
                   <div class="position-absolute top-0 start-0 w-100 h-100 bg-info opacity-25" v-if="config.special && (item.sp || item.sv)"></div>
@@ -357,6 +365,7 @@
               item.st = this.showItemState(item)
               item.sp = this.showItemSpecial(item.vc, 'pl')
               item.sv = this.showItemSpecial(item.vc, 'var')
+              item.sn = item.vp == null
             })
             return total
           },
