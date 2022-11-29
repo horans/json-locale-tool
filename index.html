@@ -17,7 +17,8 @@
       .form-check { margin-bottom: 0; min-height: auto; }
       .fa { line-height: var(--bs-body-line-height); }
       @media (max-width: 1399px) { ul { font-size: 12px; } }
-      @media (max-width: 1199px) { u { display: none; } }
+      @media (max-width: 1199px) { u u { display: none; } }
+      @media (max-width: 991px) { u { display: none; } }
     </style>
   </head>
   <body class="d-flex flex-column vh-100">
@@ -43,13 +44,13 @@
                 title="Import an old JSON locale file as base"
               >
                 <i class="fa fa-fw fa-backward-step"></i>
-                <u><span data-locale="en">Import Previous</span><span data-locale="zh">导入旧版</span></u>
+                <u><span data-locale="en"><u>Import </u>Previous</span><span data-locale="zh">导入旧版</span></u>
               </button>
               <button type="button" class="btn btn-danger d-flex gap-1" @click="pick('current')"
                 title="Import a new JSON locale file to compare"
               >
                 <i class="fa fa-fw fa-forward-step"></i>
-                <u><span data-locale="en">Import Current</span><span data-locale="zh">导入新版</span></u>
+                <u><span data-locale="en"><u>Import </u>Current</span><span data-locale="zh">导入新版</span></u>
               </button>
             </div>
           </section>
@@ -60,24 +61,24 @@
                 title="Export added/updated terms from current file as JSON for translator"
               >
                 <i class="fa fa-fw fa-code-compare"></i>
-                <u><span data-locale="en">Export Different</span><span data-locale="zh">导出不同</span></u>
+                <u><span data-locale="en"><u>Export </u>Different</span><span data-locale="zh">导出不同</span></u>
               </button>
               <button type="button" class="btn btn-outline-success d-flex gap-1" :disabled="!hasImported" @click="save('merge')"
                 title="Merge added/updated terms into previous file and export as JSON for developer"
               >
                 <i class="fa fa-fw fa-code-merge"></i>
-                <u><span data-locale="en">Export Merged</span><span data-locale="zh">导出合并</span></u>
+                <u><span data-locale="en"><u>Export </u>Merged</span><span data-locale="zh">导出合并</span></u>
               </button>
               <button type="button" class="btn btn-outline-info d-flex gap-1" :disabled="!hasImported" @click="save('clean')"
                 title="Delete removed terms from previous file and export as JSON for developer"
               >
                 <i class="fa fa-fw fa-hand-sparkles"></i>
-                <u><span data-locale="en">Export Cleaned</span><span data-locale="zh">导出清理</span></u>
+                <u><span data-locale="en"><u>Export </u>Cleaned</span><span data-locale="zh">导出清理</span></u>
               </button>
             </div>
           </section>
           <section>
-            <button type="button" class="btn btn-outline-warning d-flex gap-1" @click="reset()">
+            <button type="button" class="btn btn-outline-warning d-flex gap-1" :disabled="!hasFile" @click="reset()">
               <i class="fa fa-fw fa-clock-rotate-left"></i>
               <u><span data-locale="en">Reset</span><span data-locale="zh">重置</span></u>
             </button>
@@ -106,7 +107,7 @@
                     <input v-model="config.intl" class="form-check-input" type="checkbox">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-globe"></i>
-                      <u><span data-locale="en">English UI</span><span data-locale="zh">英语界面</span></u>
+                      <u><span data-locale="en">English<u> UI</u></span><span data-locale="zh">英语界面</span></u>
                     </dt>
                       
                   </label>
@@ -114,14 +115,14 @@
                     <input v-model="config.file" class="form-check-input" type="checkbox" :disabled="!hasFile">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-circle-info"></i>
-                      <u><span data-locale="en">File Info</span><span data-locale="zh">文件信息</span></u>
+                      <u><span data-locale="en"><u>File </u>Info</span><span data-locale="zh">文件信息</span></u>
                     </dt>
                   </label>
                   <label class="form-check" title="Highlight null value for previous, and plurals/variables for current">
                     <input v-model="config.special" class="form-check-input" type="checkbox" :disabled="!hasFile">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-highlighter"></i>
-                      <u><span data-locale="en">Label Special</span><span data-locale="zh">标记特殊</span></u>
+                      <u><span data-locale="en"><u>Label </u>Special</span><span data-locale="zh">标记特殊</span></u>
                     </dt>
                   </label>
                 </div>
@@ -140,21 +141,21 @@
                     <input v-model="config.flat" class="form-check-input" type="checkbox" :disabled="!hasImported">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-rectangle-list"></i>
-                      <u><span data-locale="en">Flat Keys</span><span data-locale="zh">平铺标识</span></u>
+                      <u><span data-locale="en">Flat<u> Keys</u></span><span data-locale="zh">平铺标识</span></u>
                     </dt>
                   </label>
                   <label class="form-check" title="Only process added terms for different/merged">
                     <input v-model="config.skip" class="form-check-input" type="checkbox" :disabled="!hasImported">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-forward"></i>
-                      <u><span data-locale="en">Skip Updated</span><span data-locale="zh">忽略变更</span></u>
+                      <u><span data-locale="en">Skip<u> Updated</u></span><span data-locale="zh">忽略变更</span></u>
                     </dt>
                   </label>
                   <label class="form-check" title="Delete null keys for merged/cleaned">
                     <input v-model="config.delete" class="form-check-input" type="checkbox" :disabled="!hasImported">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-eraser"></i>
-                      <u><span data-locale="en">Del. Empty</span><span data-locale="zh">删除空值</span></u>
+                      <u><span data-locale="en">Del.<u>Empty</u></span><span data-locale="zh">删除空值</span></u>
                     </dt>
                   </label>
                 </div>
