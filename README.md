@@ -4,9 +4,9 @@ An online inspect/export tool for Vue i18n JSON locale files.
 
 ## CHANGELOG
 
-### 2022-11-30
+### 2022-12-01
 
-- -temp disabled delete null keys
+- #fix delete null keys
 
 ### 2022-11-29
 

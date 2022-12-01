@@ -28,7 +28,7 @@
     *  description: main page                            *
     *  author: horans@gmail.com                          *
     *  url: github.com/horans/json-locale-tool           *
-    *  update: 221130                                    *
+    *  update: 221201                                    *
     *****************************************************/
      -->
     <main id="app" class="container flex-grow-1 d-flex flex-column gap-4">
@@ -152,7 +152,7 @@
                     </dt>
                   </label>
                   <label class="form-check" title="Delete null keys for merged/cleaned">
-                    <input v-model="config.delete" class="form-check-input" type="checkbox" disabled>
+                    <input v-model="config.delete" class="form-check-input" type="checkbox" :disabled="!hasImported">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-eraser"></i>
                       <u><span data-locale="en">Del.<u>Empty</u></span><span data-locale="zh">删除空值</span></u>
@@ -377,9 +377,9 @@
     <script>
       // https://github.com/lodash/lodash/issues/2240
       const flattenKeys = (obj, path = []) =>
-          !_.isObject(obj)
-              ? { [path.join('.')]: obj }
-              : _.reduce(obj, (cum, next, key) => _.merge(cum, flattenKeys(next, [...path, key])), {})
+        !_.isObject(obj)
+          ? { [path.join('.')]: obj }
+          : _.reduce(obj, (cum, next, key) => _.merge(cum, flattenKeys(next, [...path, key])), {})
 
       const defaultFile = { name: '', size: null, lastModified: null,  }
       const patternPl = /\|/g
@@ -406,7 +406,7 @@
               flat: true,
               special: true,
               skip: false,
-              delete: false,
+              delete: true,
               same: false,
               added: true,
               removed: true,
@@ -496,21 +496,23 @@
             } catch {}
           },
           getExportedMessage (output) {
-            let obj = {}
+            let obj = _.cloneDeep(this.message.previous)
             switch(output) {
               case 'clean':
-                obj =_.omit(this.message.previous, this.listRemoved.map(item => item.kp))
+                obj = _.omit(obj, this.listRemoved.map(item => item.kp))
                 break
-              case 'merge':
-                obj = _.cloneDeep(this.message.previous)
               case 'differ':
+                obj = {}
+              case 'merge':
                 _.each(this.config.skip ? this.listAdded : _.clone(this.listAdded).concat(this.listUpdated), item => {
                   _.set(obj, item.kc, item.vc)
                 })
                 break
               default: break
             }
-            if (this.config.delete && output !== 'differ') obj = _.omit(obj, this.listAdded.map(item => item.kc))
+            if (this.config.delete && output !== 'differ') {
+              obj = _.omit(obj, Object.keys(_.pickBy(flattenKeys(obj), _.isNil)))
+            }
             return this.config.flat ? flattenKeys(obj) : obj
           },
           showItemState (item) {
