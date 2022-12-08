@@ -28,7 +28,7 @@
     *  description: main page                            *
     *  author: horans@gmail.com                          *
     *  url: github.com/horans/json-locale-tool           *
-    *  update: 221201                                    *
+    *  update: 221208                                    *
     *****************************************************/
      -->
     <main id="app" class="container flex-grow-1 d-flex flex-column gap-4">
@@ -89,7 +89,7 @@
         <hr>
         <section class="row text-center">
           <h2 class="h5 col-6"><i class="fa fa-fw fa-gear"></i> <span data-locale="en">Settings</span><span data-locale="zh">设置</span></h2>
-          <h2 class="h5 col-6"><i class="fa fa-fw fa-tag"></i> <span data-locale="en">Terms</span><span data-locale="zh">名词</span></h2>
+          <h2 class="h5 col-6"><i class="fa fa-fw fa-tag"></i> <span data-locale="en">Terms</span><span data-locale="zh">词条</span></h2>
         </section>
 
         <section class="row">
@@ -265,7 +265,7 @@
             <li class="list-group-item d-flex justify-content-between">
               <dt class="d-flex gap-1">
                 <i class="fa fa-fw fa-tag"></i>
-                <u><span data-locale="en">Term Count</span><span data-locale="zh">名词数量</span>:</u>
+                <u><span data-locale="en">Term Count</span><span data-locale="zh">词条数量</span>:</u>
               </dt>
               <dd v-if="name === 'previous' ? hasPrevious : hasCurrent">{{ Object.keys(name === 'previous' ? listPrevious : listCurrent).length }}</dd>
             </li>
@@ -511,6 +511,7 @@
               default: break
             }
             if (this.config.delete && output !== 'differ') {
+              // https://stackoverflow.com/questions/30812765/
               obj = _.omit(obj, Object.keys(_.pickBy(flattenKeys(obj), _.isNil)))
             }
             return this.config.flat ? flattenKeys(obj) : obj
