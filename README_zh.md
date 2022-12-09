@@ -1,6 +1,6 @@
 # JSON 多语言工具
 
-在线审阅/导出 [Vue i18n](https://github.com/intlify/vue-i18n-next) JSON 语言文件，自动合并增量翻译，提升效率。
+在线审阅/导出 [Vue i18n](https://github.com/intlify/vue-i18n-next) JSON 语言文件，自动合并增量翻译，提升效率。  
 [更新日志](CHANGELOG.md) | [English Readme](README.md)
 
 ## 特性
