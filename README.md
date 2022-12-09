@@ -1,7 +1,7 @@
 # Locale Tool for JSON
 
 An online inspect/export tool for [Vue i18n](https://github.com/intlify/vue-i18n-next) JSON locale file.
-Auto merge incremental translations, and more. [CHANGELOG](CHANGELOG.md) [中文文档](README-zh.md)
+Auto merge incremental translations, and more. [CHANGELOG](CHANGELOG.md) | [中文文档](README_zh.md)
 
 ## Features
 
@@ -11,15 +11,6 @@ Auto merge incremental translations, and more. [CHANGELOG](CHANGELOG.md) [中文
 - __Merge:__ Merge added/updated terms into previous file and export as JSON for developer.
 - __Clean:__ Delete removed terms from previous file and export as JSON for developer.
 - __Reset:__ Clear previous/current data on the page, settings remain.
-
-## Notes
-
-- __Same:__ Both previous and current locale files have this key, and have identical value.
-- __Updated:__ Both previous and current locale files have this key, but have diffrent value.
-- __Added:__ Current locale file has this key, but previous does not.
-- __Removed:__ Current locale file does not has this key, but previous does.
-- __Changed:__ Including `Added`, `Updated`, and `Removed`.
-- __Total:__ Including `Same` and `Changed`
 
 ## Toturials
 
@@ -65,6 +56,15 @@ Auto merge incremental translations, and more. [CHANGELOG](CHANGELOG.md) [中文
 - __Flat Keys:__ Treat JSON key as flatten string, rather than nested object. (eg., `common.action.submit`)
 - __Skip Update:__ Only process added terms for different/merged.
 - __Delete Empty:__ Delete null keys for merged/cleaned.
+
+## Notes
+
+- __Same:__ Both previous and current locale files have this key, and have identical value.
+- __Updated:__ Both previous and current locale files have this key, but have diffrent value.
+- __Added:__ Current locale file has this key, but previous does not.
+- __Removed:__ Current locale file does not has this key, but previous does.
+- __Changed:__ Including `Added`, `Updated`, and `Removed`.
+- __Total:__ Including `Same` and `Changed`
 
 ## More
 
