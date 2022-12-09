@@ -28,7 +28,7 @@
     *  description: main page                            *
     *  author: horans@gmail.com                          *
     *  url: github.com/horans/json-locale-tool           *
-    *  update: 221208                                    *
+    *  update: 221209                                    *
     *****************************************************/
      -->
     <main id="app" class="container flex-grow-1 d-flex flex-column gap-4">
@@ -41,13 +41,13 @@
             <i class="fa fa-fw fa-file-import"></i>
             <div class="btn-group" role="group">
               <button type="button" class="btn btn-primary d-flex gap-1" @click="pick('previous')"
-                title="Import an old JSON locale file as base"
+                title="Import an old JSON locale file as baseline."
               >
                 <i class="fa fa-fw fa-backward-step"></i>
                 <u><span data-locale="en"><u>Import </u>Previous</span><span data-locale="zh">导入旧版</span></u>
               </button>
               <button type="button" class="btn btn-danger d-flex gap-1" @click="pick('current')"
-                title="Import a new JSON locale file to compare"
+                title="Import a new JSON locale file to compare."
               >
                 <i class="fa fa-fw fa-forward-step"></i>
                 <u><span data-locale="en"><u>Import </u>Current</span><span data-locale="zh">导入新版</span></u>
@@ -58,19 +58,19 @@
             <i class="fa fa-fw fa-file-export"></i>
             <div class="btn-group" role="group">
               <button type="button" class="btn btn-outline-secondary d-flex gap-1" :disabled="!hasImported" @click="save('differ')"
-                title="Export added/updated terms from current file as JSON for translator"
+                title="Export added/updated terms from current file as JSON for translator."
               >
                 <i class="fa fa-fw fa-code-compare"></i>
                 <u><span data-locale="en"><u>Export </u>Different</span><span data-locale="zh">导出不同</span></u>
               </button>
               <button type="button" class="btn btn-outline-success d-flex gap-1" :disabled="!hasImported" @click="save('merge')"
-                title="Merge added/updated terms into previous file and export as JSON for developer"
+                title="Merge added/updated terms into previous file and export as JSON for developer."
               >
                 <i class="fa fa-fw fa-code-merge"></i>
                 <u><span data-locale="en"><u>Export </u>Merged</span><span data-locale="zh">导出合并</span></u>
               </button>
               <button type="button" class="btn btn-outline-info d-flex gap-1" :disabled="!hasImported" @click="save('clean')"
-                title="Delete removed terms from previous file and export as JSON for developer"
+                title="Delete removed terms from previous file and export as JSON for developer."
               >
                 <i class="fa fa-fw fa-hand-sparkles"></i>
                 <u><span data-locale="en"><u>Export </u>Cleaned</span><span data-locale="zh">导出清理</span></u>
@@ -103,7 +103,7 @@
                   </label>
                 </div>
                 <div class="col-10 col-lg-9 d-flex gap-4">
-                  <label class="form-check" title="Show page in English or Chinese">
+                  <label class="form-check" title="Show page in English or Chinese.">
                     <input v-model="config.intl" class="form-check-input" type="checkbox">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-globe"></i>
@@ -111,14 +111,14 @@
                     </dt>
                       
                   </label>
-                  <label class="form-check" title="Show extra info from locale files">
+                  <label class="form-check" title="Show extra info from locale files.">
                     <input v-model="config.file" class="form-check-input" type="checkbox" :disabled="!hasFile">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-circle-info"></i>
                       <u><span data-locale="en"><u>File </u>Info</span><span data-locale="zh">文件信息</span></u>
                     </dt>
                   </label>
-                  <label class="form-check" title="Highlight null value for previous, and plurals/variables for current">
+                  <label class="form-check" title="Highlight null value for previous, and plurals/variables for current.">
                     <input v-model="config.special" class="form-check-input" type="checkbox" :disabled="!hasFile">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-highlighter"></i>
@@ -137,21 +137,21 @@
                   </label>
                 </div>
                 <div class="col-10 col-lg-9 d-flex gap-4">
-                  <label class="form-check" title="Treat .json key as flatten string">
+                  <label class="form-check" title="Treat JSON key as flatten string.">
                     <input v-model="config.flat" class="form-check-input" type="checkbox" :disabled="!hasImported">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-rectangle-list"></i>
                       <u><span data-locale="en">Flat<u> Keys</u></span><span data-locale="zh">平铺标识</span></u>
                     </dt>
                   </label>
-                  <label class="form-check" title="Only process added terms for different/merged">
+                  <label class="form-check" title="Only process added terms for different/merged.">
                     <input v-model="config.skip" class="form-check-input" type="checkbox" :disabled="!hasImported">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-forward"></i>
                       <u><span data-locale="en">Skip<u> Updated</u></span><span data-locale="zh">忽略变更</span></u>
                     </dt>
                   </label>
-                  <label class="form-check" title="Delete null keys for merged/cleaned">
+                  <label class="form-check" title="Delete null keys for merged/cleaned.">
                     <input v-model="config.delete" class="form-check-input" type="checkbox" :disabled="!hasImported">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-eraser"></i>
@@ -165,7 +165,7 @@
           <ul class="list-group list-group-flush col-6">
             <li class="list-group-item">
               <div class="row">
-                <label class="form-check col-4">
+                <label class="form-check col-4" title="Including same/changed.">
                   <dl class="form-check-label d-flex gap-1">
                     <dt class="d-flex gap-1">
                       <i class="fa fa-fw fa-circle-up"></i>
@@ -174,7 +174,7 @@
                     <dd>{{ listTotal.length }}</dd>
                   </dl>
                 </label>
-                <label class="form-check col-4">
+                <label class="form-check col-4" title="Including added/updated/removed.">
                   <dl class="form-check-label d-flex gap-1">
                     <dt class="d-flex gap-1">
                       <i class="fa fa-fw fa-circle-exclamation"></i>
@@ -183,7 +183,7 @@
                     <dd v-if="hasImported">{{ listChanged.length }}</dd>
                   </dl>
                 </label>
-                <label class="form-check col-4">
+                <label class="form-check col-4" title="Both previous and current locale files have this key, and have identical value.">
                   <input v-model="config.same" class="form-check-input" type="checkbox" role="switch" :disabled="!hasImported">
                   <dl class="d-flex gap-1">
                     <dt class="d-flex gap-1">
@@ -197,7 +197,7 @@
             </li>
             <li class="list-group-item">
               <div class="row">
-                <label class="form-check col-4">
+                <label class="form-check col-4" title="Current locale file has this key, but previous does not.">
                   <input v-model="config.added" class="form-check-input" type="checkbox" role="switch" :disabled="!hasImported">
                   <dl class="form-check-label d-flex gap-1 text-warning">
                     <dt class="d-flex gap-1">
@@ -207,7 +207,7 @@
                     <dd v-if="hasImported">{{ listAdded.length }}</dd>
                   </dl>
                 </label>
-                <label class="form-check col-4">
+                <label class="form-check col-4" title="Current locale file does not has this key, but previous does.">
                   <input v-model="config.removed" class="form-check-input" type="checkbox" role="switch" :disabled="!hasImported">
                   <dl class="form-check-label d-flex gap-1 text-danger">
                     <dt class="d-flex gap-1">
@@ -217,7 +217,7 @@
                     <dd v-if="hasImported">{{ listRemoved.length }}</dd>
                   </dl>
                 </label>
-                <label class="form-check col-4">
+                <label class="form-check col-4" title="Both previous and current locale files have this key, but have diffrent value.">
                   <input v-model="config.updated" class="form-check-input" type="checkbox" role="switch" :disabled="!hasImported">
                   <dl class="form-check-label d-flex gap-1 text-info">
                     <dt class="d-flex gap-1">
@@ -281,7 +281,7 @@
                   <label class="form-check">
                     <input v-model="config.kp" class="form-check-input" type="checkbox">
                     <span class="form-check-label d-flex gap-1"
-                      title="Key of previous/old/based locale file"
+                      title="Key of previous/old/baseline locale file"
                     >
                       <i class="fa fa-fw fa-key"></i>
                       <u><span data-locale="en">Key of Previous</span><span data-locale="zh">旧版标识</span></u>
@@ -292,7 +292,7 @@
                   <label class="form-check">
                     <input v-model="config.vp" class="form-check-input" type="checkbox">
                     <span class="form-check-label d-flex gap-1"
-                      title="Value of previous/old/based locale file"
+                      title="Value of previous/old/baseline locale file"
                     >
                       <i class="fa fa-fw fa-message"></i>
                       <u><span data-locale="en">Value of Previous</span><span data-locale="zh">旧版文案</span></u>
