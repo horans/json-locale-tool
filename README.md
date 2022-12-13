@@ -16,6 +16,8 @@ Auto merge incremental translations, and more. [CHANGELOG](CHANGELOG.md) | [ф╕нц
 
 ### Incremental translation
 
+Main scenario for version based translation workflow, support communication between developer and translator.
+
 1. Import LAST_VER baseline `en.json` as previous, and CURR_VER `en.json` as current.
 2. Export `Different` as `exported.json`, and submit to translator.
 3. Import CURR_VER `zh.json` as previous, and `exported_zh.json` from translator as current.
@@ -24,6 +26,8 @@ Auto merge incremental translations, and more. [CHANGELOG](CHANGELOG.md) | [ф╕нц
 
 ### Margin with baseline
 
+To eliminate differences between current translation and baseline language.
+
 1. Import baseline locale `en.json` as current.
 2. __Do check__ `Skip Updated` in settings.
 3. Import margin locale `zh.json` as previous.
@@ -31,6 +35,8 @@ Auto merge incremental translations, and more. [CHANGELOG](CHANGELOG.md) | [ф╕нц
 5. Repeat step 3-4 for rest locale files.
 
 ### Merge with none key/value datasheet
+
+How to banfit with this tool with pure translations by hand.
 
 1. Import baseline `en.json` both as previous and current.
 2. __Do check__ `Flat Keys` in settings.
