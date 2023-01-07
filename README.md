@@ -19,9 +19,9 @@ Auto merge incremental translations, and more. [CHANGELOG](CHANGELOG.md) | [ф╕нц
 Main scenario for version based translation workflow, support communication between developer and translator.
 
 1. Import LAST_VER baseline `en.json` as previous, and CURR_VER `en.json` as current.
-2. Export `Different` as `exported.json`, and submit to translator.
+2. Export *Different* as `exported.json`, and submit to translator.
 3. Import CURR_VER `zh.json` as previous, and `exported_zh.json` from translator as current.
-4. Export `Merged` as `zh.json`, and replace it.
+4. Export *Merged* as `zh.json`, and replace it.
 5. Repeat step 3-4 for rest locale files.
 
 ### Margin with baseline
@@ -29,9 +29,9 @@ Main scenario for version based translation workflow, support communication betw
 To eliminate differences between current translation and baseline language.
 
 1. Import baseline locale `en.json` as current.
-2. __Do check__ `Skip Updated` in settings.
+2. __Do check__ *Skip Updated* in settings.
 3. Import margin locale `zh.json` as previous.
-4. Export `Cleaned` as `zh.json` and replace it.
+4. Export *Cleaned* as `zh.json` and replace it.
 5. Repeat step 3-4 for rest locale files.
 
 ### Merge with none key/value datasheet
@@ -39,12 +39,12 @@ To eliminate differences between current translation and baseline language.
 How to banfit with this tool with pure translations by hand.
 
 1. Import baseline `en.json` both as previous and current.
-2. __Do check__ `Flat Keys` in settings.
-3. Export `Cleaned` as `exported.json`.
+2. __Do check__ *Flat Keys* in settings.
+3. Export *Cleaned* as `exported.json`.
 4. __Only keep__ the keys(left value as null) from datasheet `en.xlsx`, and remove the rest key/value.
 5. Save filtered `exported.json` as `exported_en.json` and fill in values from datasheet.
 6. Import `en.json` as previous, and `exported_en.json` as current.
-7. Export `Merged` as `en.json`, and replace it.
+7. Export *Merged* as `en.json`, and replace it.
 8. Repeat step 5-7 for rest  locale files.
 
 ## Settings
@@ -59,6 +59,7 @@ How to banfit with this tool with pure translations by hand.
 
 ### Export
 
+- __Use Code:__ Import/Export code other than JSON file (with dialog).
 - __Flat Keys:__ Treat JSON key as flatten string, rather than nested object. (eg., `common.action.submit`)
 - __Skip Update:__ Only process added terms for different/merged.
 - __Delete Empty:__ Delete null keys for merged/cleaned.
@@ -69,8 +70,8 @@ How to banfit with this tool with pure translations by hand.
 - __Updated:__ Both previous and current locale files have this key, but have diffrent value.
 - __Added:__ Current locale file has this key, but previous does not.
 - __Removed:__ Current locale file does not has this key, but previous does.
-- __Changed:__ Including `Added`, `Updated`, and `Removed`.
-- __Total:__ Including `Same` and `Changed`
+- __Changed:__ Including *Added*, *Updated*, and *Removed*.
+- __Total:__ Including *Same* and *Changed*.
 
 ## More
 

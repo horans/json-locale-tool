@@ -13,12 +13,13 @@
       header:not(.ready), article:not(.ready) { opacity: 0; pointer-events: none; }
       u { text-decoration: none; }
       dl, dt, dd { margin-bottom: 0; font-weight: 400; }
+      textarea { resize: none; font-size: 12px !important; }
       [lang="en"] [data-locale="zh"], [lang="zh"] [data-locale="en"] { display: none; }
       .form-check { margin-bottom: 0; min-height: auto; }
       .fa { line-height: var(--bs-body-line-height); }
-      @media (max-width: 1399px) { ul { font-size: 12px; } }
+      @media (max-width: 1199px) { ul { font-size: 12px; } }
       @media (max-width: 1199px) { u u { display: none; } }
-      @media (max-width: 991px) { u { display: none; } }
+      @media (max-width: 767px) { u { display: none; } }
     </style>
   </head>
   <body class="d-flex flex-column vh-100">
@@ -28,7 +29,7 @@
     *  description: main page                            *
     *  author: horans@gmail.com                          *
     *  url: github.com/horans/json-locale-tool           *
-    *  update: 221209                                    *
+    *  update: 230107                                    *
     *****************************************************/
      -->
     <main id="app" class="container flex-grow-1 d-flex flex-column gap-4">
@@ -36,7 +37,7 @@
         <h1 class="h3 mb-3 text-center">
           <i class="fa fa-fw fa-language"></i> <span data-locale="en">Locale Tool for JSON</span><span data-locale="zh">JSON 多语言工具</span>
         </h1>
-        <div class="d-flex justify-content-center align-items-center gap-4">
+        <div class="d-flex justify-content-center align-items-center gap-3">
           <section class="d-flex gap-2 align-items-center">
             <i class="fa fa-fw fa-file-import"></i>
             <div class="btn-group" role="group">
@@ -78,7 +79,7 @@
             </div>
           </section>
           <section>
-            <button type="button" class="btn btn-outline-warning d-flex gap-1" :disabled="!hasFile" @click="reset()">
+            <button type="button" class="btn btn-outline-warning d-flex gap-1" :disabled="!hasMessage" @click="reset()">
               <i class="fa fa-fw fa-clock-rotate-left"></i>
               <u><span data-locale="en">Reset</span><span data-locale="zh">重置</span></u>
             </button>
@@ -87,22 +88,15 @@
           </section>
         </div>
         <hr>
-        <section class="row text-center">
-          <h2 class="h5 col-6"><i class="fa fa-fw fa-gear"></i> <span data-locale="en">Settings</span><span data-locale="zh">设置</span></h2>
-          <h2 class="h5 col-6"><i class="fa fa-fw fa-tag"></i> <span data-locale="en">Terms</span><span data-locale="zh">词条</span></h2>
-        </section>
 
         <section class="row">
-          <ul class="list-group list-group-flush col-6">
-            <li class="list-group-item">
-              <div class="row">
-                <div class="col-2 col-lg-3">
-                  <label class="d-flex gap-1">
-                    <i class="fa fa-fw fa-eye"></i>
-                    <u><span data-locale="en">Display</span><span data-locale="zh">显示</span>:</u>
-                  </label>
-                </div>
-                <div class="col-10 col-lg-9 d-flex gap-4">
+          <ul class="list-group list-group-flush col-12 col-lg-6">
+            <li class="list-group-item border-0">
+              <h2 class="h5 text-center mb-0">
+                <i class="fa fa-fw fa-gear"></i> <span data-locale="en">Settings</span><span data-locale="zh">设置</span>
+              </h2>
+            </li>
+            <li class="list-group-item d-flex gap-3 flex-wrap">
                   <label class="form-check" title="Show page in English or Chinese.">
                     <input v-model="config.intl" class="form-check-input" type="checkbox">
                     <dt class="form-check-label d-flex gap-1">
@@ -112,31 +106,26 @@
                       
                   </label>
                   <label class="form-check" title="Show extra info from locale files.">
-                    <input v-model="config.file" class="form-check-input" type="checkbox" :disabled="!hasFile">
+                    <input v-model="config.file" class="form-check-input" type="checkbox" :disabled="!hasMessage">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-circle-info"></i>
                       <u><span data-locale="en"><u>File </u>Info</span><span data-locale="zh">文件信息</span></u>
                     </dt>
                   </label>
                   <label class="form-check" title="Highlight null value for previous, and plurals/variables for current.">
-                    <input v-model="config.special" class="form-check-input" type="checkbox" :disabled="!hasFile">
+                    <input v-model="config.special" class="form-check-input" type="checkbox" :disabled="!hasMessage">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-highlighter"></i>
                       <u><span data-locale="en"><u>Label </u>Special</span><span data-locale="zh">标记特殊</span></u>
                     </dt>
                   </label>
-                </div>
-              </div>
-            </li>
-            <li class="list-group-item">
-              <div class="row">
-                <div class="col-2 col-lg-3">
-                  <label class="d-flex gap-1">
-                    <i class="fa fa-fw fa-file-export"></i>
-                    <u><span data-locale="en">Export</span><span data-locale="zh">导出</span>:</u>
+                  <label class="form-check" title="Import/Export code other than JSON file.">
+                    <input v-model="config.code" class="form-check-input" type="checkbox">
+                    <dt class="form-check-label d-flex gap-1">
+                      <i class="fa fa-fw fa-code"></i>
+                      <u><span data-locale="en"><u>Use </u>Code</span><span data-locale="zh">使用代码</span></u>
+                    </dt>
                   </label>
-                </div>
-                <div class="col-10 col-lg-9 d-flex gap-4">
                   <label class="form-check" title="Treat JSON key as flatten string.">
                     <input v-model="config.flat" class="form-check-input" type="checkbox" :disabled="!hasImported">
                     <dt class="form-check-label d-flex gap-1">
@@ -155,14 +144,17 @@
                     <input v-model="config.delete" class="form-check-input" type="checkbox" :disabled="!hasImported">
                     <dt class="form-check-label d-flex gap-1">
                       <i class="fa fa-fw fa-eraser"></i>
-                      <u><span data-locale="en">Del.<u>Empty</u></span><span data-locale="zh">删除空值</span></u>
+                      <u><span data-locale="en">Del.<u> Empty</u></span><span data-locale="zh">删除空值</span></u>
                     </dt>
                   </label>
-                </div>
-              </div>
             </li>
           </ul>
-          <ul class="list-group list-group-flush col-6">
+          <ul class="list-group list-group-flush col-12 col-lg-6">
+            <li class="list-group-item border-0">
+              <h2 class="h5 text-center mb-0">
+                <i class="fa fa-fw fa-tag"></i> <span data-locale="en">Terms</span><span data-locale="zh">词条</span>
+              </h2>
+            </li>
             <li class="list-group-item">
               <div class="row">
                 <label class="form-check col-4" title="Including same/changed.">
@@ -235,9 +227,21 @@
       </header>
 
       <article class="flex-grow-1 d-flex flex-column gap-2" :class="{ ready, active }">
-        <section class="row text-center">
-          <h2 class="h5 col-6"><i class="fa fa-fw fa-backward-step"></i> <span data-locale="en">Previous</span><span data-locale="zh">旧版</span></h2>
-          <h2 class="h5 col-6"><i class="fa fa-fw fa-forward-step"></i> <span data-locale="en">Current</span><span data-locale="zh">新版</span></h2>
+        <section class="row">
+          <ul class="list-group list-group-flush col-6">
+            <li class="list-group-item border-0">
+              <h2 class="h5 text-center mb-0">
+                <i class="fa fa-fw fa-backward-step"></i> <span data-locale="en">Previous</span><span data-locale="zh">旧版</span>
+              </h2>
+            </li>
+          </ul>
+          <ul class="list-group list-group-flush col-6">
+            <li class="list-group-item border-0">
+              <h2 class="h5 text-center mb-0">
+                <i class="fa fa-fw fa-forward-step"></i> <span data-locale="en">Current</span><span data-locale="zh">新版</span>
+              </h2>
+            </li>
+          </ul>
         </section>
 
         <section v-if="config.file" class="row">
@@ -284,7 +288,7 @@
                       title="Key of previous/old/baseline locale file"
                     >
                       <i class="fa fa-fw fa-key"></i>
-                      <u><span data-locale="en">Key of Previous</span><span data-locale="zh">旧版标识</span></u>
+                      <u><span data-locale="en">Key<u> of Previous</u></span><span data-locale="zh">旧版标识</span></u>
                     </span>
                   </label>                
                 </th>
@@ -295,7 +299,7 @@
                       title="Value of previous/old/baseline locale file"
                     >
                       <i class="fa fa-fw fa-message"></i>
-                      <u><span data-locale="en">Value of Previous</span><span data-locale="zh">旧版文案</span></u>
+                      <u><span data-locale="en">Value<u> of Previous</u></span><span data-locale="zh">旧版文案</span></u>
                     </span>
                   </label>                
                 </th>
@@ -306,7 +310,7 @@
                       title="Key of current/new/compared locale file"
                     >
                       <i class="fa fa-fw fa-key"></i>
-                      <u><span data-locale="en">Key of Current</span><span data-locale="zh">新版标识</span></u>
+                      <u><span data-locale="en">Key<u> of Current</u></span><span data-locale="zh">新版标识</span></u>
                     </span>
                   </label>                
                 </th>
@@ -317,7 +321,7 @@
                       title="Value of current/new/compared locale file"
                     >
                       <i class="fa fa-fw fa-message"></i>
-                      <u><span data-locale="en">Value of Current</span><span data-locale="zh">新版文案</span></u>
+                      <u><span data-locale="en">Value<u> of Current</u></span><span data-locale="zh">新版文案</span></u>
                     </span>
                   </label>                
                 </th>
@@ -352,7 +356,7 @@
                     <div class="position-absolute top-0 start-0 w-100 h-100 bg-info opacity-25" v-if="config.special && (item.sp || item.sv)"></div>
                     <label class="position-absolute top-50 end-0 translate-middle-y pe-1 d-flex flex-column gap-1" v-if="config.special && (item.sp || item.sv)">
                       <i class="fa fa-fw fa-tags" v-if="item.sp"></i>
-                      <i class="fa fa-fw fa-code" v-if="item.sv"></i>
+                      <i class="fa fa-fw fa-repeat" v-if="item.sv"></i>
                     </label>
                     <span class="position-relative vertical-bottom" v-if="config.special && (item.sp || item.sv)" v-html="showFormattedText(item.vc)"></span>
                     <template v-else>{{ item.vc }}</template>
@@ -363,6 +367,24 @@
           </table>
         </section>
       </article>
+
+      <dialog class="mw-100 border-0 rounded-3" ref="dialog">
+        <section class="d-flex flex-column gap-4">
+          <textarea v-model="dialog.text" class="form-control font-monospace lh-sm" rows="25" cols="80" :readonly="pool.output.includes(dialog.status)" ref="text"></textarea>
+          <div class="d-flex gap-2 justify-content-between">
+            <button class="btn btn-primary d-flex gap-1" @click="executeDialog()" :disabled="!dialog.valid">
+              <i class="fa fa-fw fa-check"></i>
+              <u v-if="pool.input.includes(dialog.status)"><span data-locale="en">Import</span><span data-locale="zh">导入</span></u>
+              <u v-else-if="pool.output.includes(dialog.status)"><span data-locale="en">Copy</span><span data-locale="zh">复制</span></u>
+              <u v-else>OK</u>
+            </button>
+            <button class="btn btn-outline-warning" @click="closeDialog()">
+              <i class="fa fa-fw fa-xmark"></i>
+              <u><span data-locale="en">Close</span><span data-locale="zh">关闭</span></u>
+            </button>
+          </div>
+        </section>
+      </dialog>
     </main>
 
     <footer class="container">
@@ -380,7 +402,7 @@
         !_.isObject(obj)
           ? { [path.join('.')]: obj }
           : _.reduce(obj, (cum, next, key) => _.merge(cum, flattenKeys(next, [...path, key])), {})
-
+      const defaultStatus = 'pending'
       const defaultFile = { name: '', size: null, lastModified: null,  }
       const patternPl = /\|/g
       const patternVar = /{\S+}/g
@@ -391,7 +413,7 @@
           return {
             ready: false,
             active: false,
-            input: 'pending',
+            input: _.clone(defaultStatus),
             message: {
               previous: null,
               current: null
@@ -403,6 +425,7 @@
             config: {
               intl: true,
               file: false,
+              code: false,
               flat: true,
               special: true,
               skip: false,
@@ -415,6 +438,15 @@
               kc: true,
               vp: true,
               vc: true
+            },
+            dialog: {
+              status: _.clone(defaultStatus),
+              text: '',
+              valid: false
+            },
+            pool: {
+              input: ['previous', 'current'],
+              output: ['differ', 'merge', 'clean']
             }
           }
         },
@@ -442,7 +474,7 @@
             return total
           },
           listSame () { return this.listTotal.filter(item => item.st === 'same') },
-          listChanged () { return this.listTotal.filter(item => item.st !== 'pending' && item.st !== 'same') },
+          listChanged () { return this.listTotal.filter(item => item.st !== defaultStatus && item.st !== 'same') },
           listAdded () { return this.listChanged.filter(item => item.st === 'added') },
           listRemoved () { return this.listChanged.filter(item => item.st === 'removed') },
           listUpdated () { return this.listChanged.filter(item => item.st === 'updated') },
@@ -451,35 +483,38 @@
           hasTotal () { return this.listTotal.length > 0 },
           hasChanged () { return this.listChanged.length > 0 },
           hasImported () { return this.hasPrevious && this.hasCurrent },
-          hasFile () { return this.file.previous.size || this.file.current.size }
+          hasMessage () { return this.hasPrevious || this.hasCurrent }
         },
         methods: {
           reset () {
             this.active = false
-            this.mode = 'pending'
-            this.input = 'pending'
+            this.input = _.clone(defaultStatus)
             this.message.previous = null
             this.message.current = null
             this.file.previous = _.clone(defaultFile)
             this.file.current = _.clone(defaultFile)
+            this.dialog.status = _.clone(defaultStatus)
+            this.dialog.text = ''
           },
           pick (input) {
-            this.input = input
-            this.$refs.file.click()
+            if (this.config.code) {
+              this.dialog.status = input
+            } else {
+              this.input = input
+              this.$refs.file.click()
+            }
           },
           load (event) {
             const file = event.target.files[0]
             const reader = new FileReader()
             reader.addEventListener('load', e => {
               try {
-                if (this.input !== 'pending') {
-                  this.message[this.input] = JSON.parse(e.target.result)
+                if (this.input !== defaultStatus) {
                   this.file[this.input].name = file.name
                   this.file[this.input].lastModified = file.lastModified
                   this.file[this.input].size = file.size
-                  this.input = 'pending'
-                  this.active = true
                   this.$refs.file.value = null
+                  this.setMessage(this.input, e.target.result)
                 }
               } catch {}
             })
@@ -489,10 +524,16 @@
             try {
               // https://stackoverflow.com/questions/24515894/
               const str = JSON.stringify(this.getExportedMessage(output), null, 2)
-              // https://stackoverflow.com/questions/33780271/
-              this.$refs.download.href = 'data:application/json;charset=utf-8,'+ encodeURIComponent(str)
-              this.$refs.download.click()
-              setTimeout(() => { this.$refs.download.href = '#' })
+              if (this.config.code) {
+                this.dialog.text = str
+                this.dialog.status = output
+                setTimeout(() => { this.$refs.text.select() }, 50)
+              } else {
+                // https://stackoverflow.com/questions/33780271/
+                this.$refs.download.href = 'data:application/json;charset=utf-8,'+ encodeURIComponent(str)
+                this.$refs.download.click()
+                setTimeout(() => { this.$refs.download.href = '#' })
+              }
             } catch {}
           },
           getExportedMessage (output) {
@@ -517,7 +558,7 @@
             return this.config.flat ? flattenKeys(obj) : obj
           },
           showItemState (item) {
-            if (!this.hasImported) return 'pending'
+            if (!this.hasImported) return defaultStatus
             else if ((!_.has(item, 'kp') && _.has(item, 'kc'))) return 'added'
             else if ((_.has(item, 'kp') && !_.has(item, 'kc'))) return 'removed'
             else if (item.vp == null && item.vc != null) return 'added'
@@ -539,10 +580,12 @@
             return regex.test(value)
           },
           showFileSize (size) {
-            return ((_.isNumber(size) ? size : 0) / 1024).toFixed(2).toString() + ' KB'
+            if (!size) return ''
+            else return ((_.isNumber(size) ? size : 0) / 1024).toFixed(2).toString() + ' KB'
           },
           showDateTime (time) {
-            return new Date(time).toLocaleDateString(undefined, {
+            if (!time) return ''
+            else return new Date(time).toLocaleDateString(undefined, {
               year: 'numeric', month: 'numeric', day: 'numeric',
               hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: false
             })
@@ -574,6 +617,30 @@
             let isZh = false
             _.each(navigator.languages, item => { if (item.indexOf('zh') > -1) isZh = true })
             if (isZh) this.config.intl = false
+          },
+          setMessage (input, text) {
+            try {
+              if (this.pool.input.includes(input)) {
+                this.message[input] = JSON.parse(text)
+                this.active = true
+              }
+            } catch {}
+            this.input = _.clone(defaultStatus)
+          },
+          closeDialog () {
+            this.dialog.status = _.clone(defaultStatus)
+          },
+          executeDialog () {
+            const status = this.dialog.status
+            if (this.pool.input.includes(status)) this.setMessage(status, this.dialog.text)
+            else if (this.pool.output.includes(status)) {
+              try {
+                navigator.clipboard.writeText(this.dialog.text)
+              } catch {
+                document.execCommand(this.dialog.text)
+              }
+            }
+            this.closeDialog()
           }
         },
         created() {
@@ -583,6 +650,22 @@
         watch: {
           'config.intl': function (nv) {
             document.querySelector('html')?.setAttribute('lang', nv ? 'en' : 'zh')
+          },
+          'dialog.status': function (nv) {
+            const pool = [defaultStatus].concat(this.pool.input, this.pool.output)
+            if (!pool.includes(nv)) nv = _.clone(defaultStatus)
+            if (nv === defaultStatus) {
+              this.$refs.dialog.close()
+              this.dialog.text = ''
+            } else this.$refs.dialog.showModal()
+          },
+          'dialog.text': function (nv) {
+            try {
+              JSON.parse(nv)
+              this.dialog.valid = true
+            } catch {
+              this.dialog.valid = false
+            }
           }
         }
       }).mount('#app')

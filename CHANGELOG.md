@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2023-01-07
+
+- +add code dialog
+- #optimize layout
+
 ## 2022-12-09
 
 - +add zh readme
