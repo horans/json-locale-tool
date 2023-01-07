@@ -54,12 +54,12 @@ How to banfit with this tool with pure translations by hand.
 - __English UI:__ Show page in English or Chinese.
 - __File Info:__ Show extra info from locale files.
 - __Label Special:__ Highlight null value for previous, and plurals/variables for current.
-- __Terms Checks:__ show/hide same/added/removed/updated terms.
-- __Table Checks:__ show/hide key/value for previous/current locales.
+- __Terms Checks:__ Show/hide same/added/removed/updated terms.
+- __Table Checks:__ Show/hide key/value for previous/current locales.
 
 ### Export
 
-- __Use Code:__ Import/Export code other than JSON file (with dialog).
+- __Use Code:__ Import/export code other than JSON file (with dialog).
 - __Flat Keys:__ Treat JSON key as flatten string, rather than nested object. (eg., `common.action.submit`)
 - __Skip Update:__ Only process added terms for different/merged.
 - __Delete Empty:__ Delete null keys for merged/cleaned.
