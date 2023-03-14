@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2023-03-14
+
+- +add swap dialog
+- #optimize layout/readme
+
 ## 2023-01-07
 
 - +add code dialog
