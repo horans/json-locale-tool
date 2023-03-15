@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2023-03-15
+
+- +highlight internal links
+
 ## 2023-03-14
 
 - +add swap dialog

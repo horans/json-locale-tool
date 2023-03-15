@@ -29,7 +29,7 @@
     *  description: main page                            *
     *  author: horans@gmail.com                          *
     *  url: github.com/horans/json-locale-tool           *
-    *  update: 230314                                    *
+    *  update: 230315                                    *
     *****************************************************/
      -->
     <main id="app" class="container flex-grow-1 d-flex flex-column gap-3">
@@ -119,7 +119,7 @@
                     <u><span data-locale="en"><u>File </u>Info</span><span data-locale="zh">文件信息</span></u>
                   </dt>
                 </label>
-                <label class="form-check" title="Highlight null value for previous, and plurals/variables for current.">
+                <label class="form-check" title="Highlight null value for previous, and plurals/variables/links for current.">
                   <input v-model="config.special" class="form-check-input" type="checkbox" :disabled="!hasMessage">
                   <dt class="form-check-label d-flex gap-1">
                     <i class="fa fa-fw fa-highlighter"></i>
@@ -381,12 +381,13 @@
                 <td class="font-monospace text-wrap text-muted fw-light">{{ config.kc ? item.kc : '' }}</td>
                 <td class="text-wrap position-relative">
                   <template v-if="config.vc">
-                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-info opacity-25" v-if="config.special && (item.sp || item.sv)"></div>
-                    <label class="position-absolute top-50 end-0 translate-middle-y pe-1 d-flex flex-column gap-1" v-if="config.special && (item.sp || item.sv)">
+                    <div class="position-absolute top-0 start-0 w-100 h-100 bg-info opacity-25" v-if="config.special && isItemSpecial(item)"></div>
+                    <label class="position-absolute top-50 end-0 translate-middle-y pe-1 d-flex flex-column gap-1" v-if="config.special && isItemSpecial(item)">
                       <i class="fa fa-fw fa-tags" v-if="item.sp"></i>
                       <i class="fa fa-fw fa-diagram-predecessor" v-if="item.sv"></i>
+                      <i class="fa fa-fw fa-link" v-if="item.sl"></i>
                     </label>
-                    <span class="position-relative vertical-bottom" v-if="config.special && (item.sp || item.sv)" v-html="showFormattedText(item.vc)"></span>
+                    <span class="position-relative vertical-bottom" v-if="config.special && isItemSpecial(item)" v-html="showFormattedText(item.vc)"></span>
                     <template v-else>{{ item.vc }}</template>
                   </template>
                 </td>
@@ -478,8 +479,7 @@
           : _.reduce(obj, (cum, next, key) => _.merge(cum, flattenKeys(next, [...path, key])), {})
       const defaultStatus = 'pending'
       const defaultFile = { name: '', size: null, lastModified: null,  }
-      const patternPl = /\|/g
-      const patternVar = /{\S+}/g
+      const patternSpecial = { plural: /\|/g, variable: /{\S+}/g, link: /@:\S+/g }
 
       const { createApp } = Vue
       createApp({
@@ -542,8 +542,9 @@
             })
             _.each(total, item => {
               item.st = this.showItemState(item)
-              item.sp = this.showItemSpecial(item.vc, 'pl')
-              item.sv = this.showItemSpecial(item.vc, 'var')
+              item.sp = patternSpecial.plural.test(item.vc)
+              item.sv = patternSpecial.variable.test(item.vc)
+              item.sl = patternSpecial.link.test(item.vc)
               item.sn = item.kp != null && item.vp == null
             })
             return total
@@ -651,18 +652,8 @@
             else if (item.vp !== item.vc) return 'updated'
             else return 'same'
           },
-          showItemSpecial (value, type) {
-            let regex
-            switch(type) {
-              case 'pl':
-                regex = patternPl
-                break
-              case 'var':
-                regex = patternVar
-                break
-              default: return false
-            }
-            return regex.test(value)
+          isItemSpecial (item) {
+            return item.sp || item.sv || item.sl
           },
           showFileSize (size) {
             if (!size) return ''
@@ -694,8 +685,9 @@
                 return output
               } else return str
             }
-            text = execPattern(text, patternPl)
-            text = execPattern(text, patternVar)
+            text = execPattern(text, patternSpecial.plural)
+            text = execPattern(text, patternSpecial.variable)
+            text = execPattern(text, patternSpecial.link)
             return text
           },
           checkBrowserLanguage () {

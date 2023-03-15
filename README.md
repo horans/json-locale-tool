@@ -54,7 +54,7 @@ How to benefit from this tool with pure translations by hand.
 
 - __English UI:__ Show the page in English or Chinese.
 - __File Info:__ Show extra info from locale files.
-- __Label Special:__ Highlight null value for previous, and plurals/variables for current.
+- __Label Special:__ Highlight null value for previous, and plurals/variables/links for current.
 - __Terms Checks:__ Show/hide same/added/removed/updated terms.
 - __Table Checks:__ Show/hide key/value for previous/current locales.
 
