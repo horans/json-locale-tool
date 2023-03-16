@@ -80,3 +80,4 @@
 - 仅需单个 HTML 文件即可运行，依赖通过 CDN 加载
 - 响应式布局，已适配平板和手机
 - 自动根据浏览器设定切换为中文（`navigator.languages`）
+- 导出的 JSON 文件编码格式为 `UTF-8 with BOM`

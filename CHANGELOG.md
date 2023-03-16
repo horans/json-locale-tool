@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2023-03-16
+
+- #export in utf-8 with bom
+
 ## 2023-03-15
 
 - +highlight internal links

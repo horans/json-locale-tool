@@ -80,3 +80,4 @@ How to benefit from this tool with pure translations by hand.
 - Only need one single HTML to work, dependencies are loaded over CDN.
 - Responsive layout adaption ready for tablet/mobile.
 - Auto switch to Chinese based on browser setting(`navigator.languages`).
+- Exported JSON file is encoded in `UTF-8 with BOM`.
