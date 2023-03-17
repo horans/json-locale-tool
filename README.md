@@ -55,6 +55,9 @@ How to benefit from this tool with pure translations by hand.
 - __English UI:__ Show the page in English or Chinese.
 - __File Info:__ Show extra info from locale files.
 - __Label Special:__ Highlight null value for previous, and plurals/variables/links for current.
+  - Plural: Regexp pattern as `/\|/g`, eg., `Cat | Cats`.
+  - Variable: Regexp pattern as `/{[^'\s]+}/g`, eg., `Hello {name}!`.
+  - Link: Regexp pattern as `/@:\S+{''}/g`, eg., `Welcome to @:title{''}!`.
 - __Terms Checks:__ Show/hide same/added/removed/updated terms.
 - __Table Checks:__ Show/hide key/value for previous/current locales.
 

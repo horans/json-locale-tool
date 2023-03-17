@@ -29,7 +29,7 @@
     *  description: main page                            *
     *  author: horans@gmail.com                          *
     *  url: github.com/horans/json-locale-tool           *
-    *  update: 230316                                    *
+    *  update: 230317                                    *
     *****************************************************/
      -->
     <main id="app" class="container flex-grow-1 d-flex flex-column gap-3">
@@ -479,7 +479,12 @@
           : _.reduce(obj, (cum, next, key) => _.merge(cum, flattenKeys(next, [...path, key])), {})
       const defaultStatus = 'pending'
       const defaultFile = { name: '', size: null, lastModified: null,  }
-      const patternSpecial = { plural: /\|/g, variable: /{\S+}/g, link: /@:\S+/g }
+      const patternSpecial = {
+        plural: /\|/g,
+        // https://stackoverflow.com/questions/6125098/
+        variable: /{[^'\s]+}/g,
+        link: /@:\S+{''}/g
+      }
 
       const { createApp } = Vue
       createApp({
