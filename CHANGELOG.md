@@ -2,16 +2,9 @@
 
 ## 2023-03-16
 
-- #export in utf-8 with bom
-
-## 2023-03-15
-
-- +highlight internal links
-
-## 2023-03-14
-
 - +add swap dialog
-- #optimize layout/readme
+- +highlight internal links
+- #export in utf-8 with bom
 
 ## 2023-01-07
 
@@ -24,11 +17,8 @@
 
 ## 2022-12-01
 
-- #fix delete null keys
-
-## 2022-11-29
-
 - +adapt for mobile
+- #fix delete null keys
 
 ## 2022-11-25
 
