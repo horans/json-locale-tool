@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2024-03-07
+
+- +show term counts on action buttons
+- #update vendors
+
 ## 2023-03-16
 
 - +add swap dialog

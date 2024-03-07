@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Locale Tool</title>
     <link rel="shortcut icon" href="https://horans.github.io/asset/favicon.ico">
-    <link href="https://cdn.staticfile.org/bootstrap/5.2.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.staticfile.org/font-awesome/6.2.1/css/fontawesome.min.css" rel="stylesheet">
-    <link href="https://cdn.staticfile.org/font-awesome/6.2.1/css/solid.min.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/font-awesome/6.5.1/css/fontawesome.min.css" rel="stylesheet">
+    <link href="https://cdn.staticfile.org/font-awesome/6.5.1/css/solid.min.css" rel="stylesheet">
     <style>
       article:not(.active) { opacity: 0.4; pointer-events: none; }
       header:not(.ready), article:not(.ready) { opacity: 0; pointer-events: none; }
@@ -29,7 +29,7 @@
     *  description: main page                            *
     *  author: horans@gmail.com                          *
     *  url: github.com/horans/json-locale-tool           *
-    *  update: 230317                                    *
+    *  update: 240307                                    *
     *****************************************************/
      -->
     <main id="app" class="container flex-grow-1 d-flex flex-column gap-3">
@@ -41,46 +41,100 @@
           <nav class="d-flex gap-2 align-items-center">
             <i class="fa fa-fw fa-file-import"></i>
             <div class="btn-group" role="group">
-              <button type="button" class="btn btn-primary d-flex gap-1" @click="pick('previous')"
+              <button type="button" class="btn btn-primary d-flex gap-1 position-relative z-1" @click="pick('previous')"
                 title="Import an old JSON locale file as baseline."
               >
                 <i class="fa fa-fw fa-backward-step"></i>
-                <u><span data-locale="en"><u>Imp. </u>Previous</span><span data-locale="zh"><u>导入</u>旧版</span></u>
+                <u>
+                  <span data-locale="en"><u>Imp. </u>Previous</span>
+                  <span data-locale="zh"><u>导入</u>旧版</span>
+                  <u
+                    v-if="Object.keys(listPrevious).length > 0"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary"
+                  >
+                    {{ Object.keys(listPrevious).length }}
+                  </u>
+                </u>
               </button>
-              <button type="button" class="btn btn-danger d-flex gap-1" @click="pick('current')"
+              <button type="button" class="btn btn-danger d-flex gap-1 position-relative z-0" @click="pick('current')"
                 title="Import a new JSON locale file to compare."
               >
                 <i class="fa fa-fw fa-forward-step"></i>
-                <u><span data-locale="en"><u>Imp. </u>Current</span><span data-locale="zh"><u>导入</u>新版</span></u>
+                <u>
+                  <span data-locale="en"><u>Imp. </u>Current</span>
+                  <span data-locale="zh"><u>导入</u>新版</span>
+                  <u
+                    v-if="Object.keys(listCurrent).length > 0"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                  >
+                    {{ Object.keys(listCurrent).length }}
+                  </u>
+                </u>
               </button>
             </div>
           </nav>
           <nav class="d-flex gap-2 align-items-center">
             <i class="fa fa-fw fa-file-export"></i>
             <div class="btn-group" role="group">
-              <button type="button" class="btn btn-outline-secondary d-flex gap-1" :disabled="!hasImported" @click="save('differ')"
+              <button type="button" class="btn btn-outline-secondary d-flex gap-1 position-relative z-3" :disabled="!hasImported" @click="save('differ')"
                 title="Export added/updated terms from the current file as JSON for translators."
               >
                 <i class="fa fa-fw fa-code-compare"></i>
-                <u><span data-locale="en"><u>Exp. </u>Different</span><span data-locale="zh"><u>导出</u>不同</span></u>
+                <u>
+                  <span data-locale="en"><u>Exp. </u>Different</span>
+                  <span data-locale="zh"><u>导出</u>不同</span>
+                  <u
+                    v-if="hasImported && Object.keys(getExportedMessage('differ')).length > 0"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-secondary"
+                  >
+                    {{ Object.keys(getExportedMessage('differ')).length }}
+                  </u>
+                </u>
               </button>
-              <button type="button" class="btn btn-outline-success d-flex gap-1" :disabled="!hasImported" @click="save('merge')"
+              <button type="button" class="btn btn-outline-success d-flex gap-1 position-relative z-2" :disabled="!hasImported" @click="save('merge')"
                 title="Merge added/updated terms into the previous file and export as JSON for developers."
               >
                 <i class="fa fa-fw fa-code-merge"></i>
-                <u><span data-locale="en"><u>Exp. </u>Merged</span><span data-locale="zh"><u>导出</u>合并</span></u>
+                <u>
+                  <span data-locale="en"><u>Exp. </u>Merged</span>
+                  <span data-locale="zh"><u>导出</u>合并</span>
+                  <u
+                    v-if="hasImported && Object.keys(getExportedMessage('merge')).length > 0"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-success"
+                  >
+                    {{ Object.keys(getExportedMessage('merge')).length }}
+                  </u>
+                </u>
               </button>
-              <button type="button" class="btn btn-outline-info d-flex gap-1" :disabled="!hasImported" @click="save('clean')"
+              <button type="button" class="btn btn-outline-info d-flex gap-1 position-relative z-1" :disabled="!hasImported" @click="save('clean')"
                 title="Delete removed terms from the previous file and export as JSON for developers."
               >
                 <i class="fa fa-fw fa-hand-sparkles"></i>
-                <u><span data-locale="en"><u>Exp. </u>Cleaned</span><span data-locale="zh"><u>导出</u>清理</span></u>
+                <u>
+                  <span data-locale="en"><u>Exp. </u>Cleaned</span>
+                  <span data-locale="zh"><u>导出</u>清理</span>
+                  <u
+                    v-if="hasImported && Object.keys(getExportedMessage('clean')).length > 0"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-info"
+                  >
+                    {{ Object.keys(getExportedMessage('clean')).length }}
+                  </u>
+                </u>
               </button>
-              <button type="button" class="btn btn-outline-dark d-flex gap-1" :disabled="listSwapped.length === 0" @click="$refs.swap.showModal()"
+              <button type="button" class="btn btn-outline-dark d-flex gap-1 position-relative z-0" :disabled="listSwapped.length === 0" @click="$refs.swap.showModal()"
                 title="Show terms with different keys but the same value."
               >
                 <i class="fa fa-fw fa-shuffle"></i>
-                <u><span data-locale="en"><u>View </u>Swapped</span><span data-locale="zh"><u>展示</u>切换</span></u>
+                <u>
+                  <span data-locale="en"><u>View </u>Swapped</span>
+                  <span data-locale="zh"><u>展示</u>切换</span>
+                  <u
+                    v-if="hasImported && listSwapped.length > 0"
+                    class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark"
+                  >
+                    {{ listSwapped.length }}
+                  </u>
+                </u>
               </button>
             </div>
           </nav>
@@ -179,7 +233,7 @@
                   <label class="form-check col-4" title="Including same/changed.">
                     <dl class="form-check-label d-flex gap-1">
                       <dt class="d-flex gap-1">
-                        <i class="fa fa-fw fa-circle-up"></i>
+                        <i class="fa fa-fw fa-circle-down"></i>
                         <u><span data-locale="en">Total</span><span data-locale="zh">总计</span>:</u>
                       </dt>
                       <dd>{{ listTotal.length }}</dd>
@@ -470,7 +524,7 @@
     </footer>
 
     <script src="https://cdn.staticfile.org/lodash.js/4.17.21/lodash.min.js"></script>
-    <script src="https://cdn.staticfile.org/vue/3.2.45/vue.global.prod.min.js"></script>
+    <script src="https://cdn.staticfile.org/vue/3.3.4/vue.global.prod.min.js"></script>
     <script>
       // https://github.com/lodash/lodash/issues/2240
       const flattenKeys = (obj, path = []) =>
