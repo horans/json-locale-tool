@@ -29,7 +29,7 @@
     *  description: main page                            *
     *  author: horans@gmail.com                          *
     *  url: github.com/horans/json-locale-tool           *
-    *  update: 240307                                    *
+    *  update: 240403                                    *
     *****************************************************/
      -->
     <main id="app" class="container flex-grow-1 d-flex flex-column gap-3">
@@ -531,6 +531,9 @@
         !_.isObject(obj)
           ? { [path.join('.')]: obj }
           : _.reduce(obj, (cum, next, key) => _.merge(cum, flattenKeys(next, [...path, key])), {})
+      const unFlattenKeys = (obj) => _.transform(obj, function(result, value, key) {
+        _.set(result, key.split('.'), value)
+      }, {})
       const defaultStatus = 'pending'
       const defaultFile = { name: '', size: null, lastModified: null,  }
       const patternSpecial = {
@@ -701,7 +704,7 @@
               // https://stackoverflow.com/questions/30812765/
               obj = _.omit(obj, Object.keys(_.pickBy(flattenKeys(obj), _.isNil)))
             }
-            return this.config.flat ? flattenKeys(obj) : obj
+            return this.config.flat ? flattenKeys(obj) : unFlattenKeys(obj)
           },
           showItemState (item) {
             if (!this.hasImported) return defaultStatus
